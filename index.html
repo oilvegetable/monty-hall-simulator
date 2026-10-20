@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore the Monty Hall problem with step-by-step games and reproducible simulations.">
+  <title>Monty Hall — Group 4</title>
+  <style>:root{--paper:#f7f5ef;--white:#fffefa;--ink:#242b2d;--muted:#686e6d;--line:#d8d8ce;--blue:#335d79;--rust:#a8422c;--gold:#b39658;--soft:#ebe9e0;--serif:Georgia,'Times New Roman',serif;--sans:Arial,Helvetica,sans-serif}*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:24px}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--sans)}button,input,select{font:inherit}button,a,input,select,summary{touch-action:manipulation}button{border:1px solid #a9ada5;border-radius:3px;background:transparent;color:var(--ink);padding:10px 16px;cursor:pointer;line-height:1.3;transition:background .15s,border-color .15s}button:hover:not(:disabled){background:var(--soft);border-color:var(--ink)}button:disabled{opacity:.4;cursor:default}button.primary{background:var(--ink);border-color:var(--ink);color:#fff}button.primary:hover:not(:disabled){background:#3f494b}button.text-button{border-color:transparent;padding-inline:8px;color:var(--muted)}a{color:inherit;text-underline-offset:4px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--gold);outline-offset:4px}[hidden]{display:none!important}.masthead,main,footer{max-width:1440px;margin:auto}.masthead{padding:42px 44px 32px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;border-bottom:1px solid var(--line)}.eyebrow{font-size:11px;letter-spacing:.15em;font-weight:600;margin:0 0 10px;color:var(--muted)}h1{font:normal clamp(42px,5vw,66px)/1.05 var(--serif);letter-spacing:-.035em;margin:0 0 12px}h2{font:normal 30px/1.18 var(--serif);letter-spacing:-.025em;margin:0 0 14px}h3{font-size:15px;margin:0 0 12px;font-weight:600}.intro{margin:0;color:var(--muted);font-size:16px}.masthead nav{display:flex;align-items:center;gap:26px;font-size:13px}.masthead nav a{text-decoration:none;white-space:nowrap}.masthead nav a:hover{text-decoration:underline}.experiment{display:grid;grid-template-columns:276px minmax(0,1fr);border-bottom:1px solid var(--line)}.controls{padding:32px 28px 30px 44px;border-right:1px solid var(--line)}.controls h2{font-size:25px;margin-bottom:26px}label{display:block;font-size:12px;font-weight:600;margin-bottom:7px}select,input[type=text],input:not([type]){width:100%;background:var(--white);color:var(--ink);border:1px solid #b9bcb3;border-radius:3px;padding:10px 12px;min-height:42px}select{padding-right:24px}input[type=number]{background:transparent;border:1px solid var(--line);border-radius:3px;width:64px;padding:5px 6px;text-align:center;font-size:14px;color:var(--ink)}input[type=range]{width:100%;accent-color:var(--ink);margin:0;cursor:pointer}input[type=checkbox]{accent-color:var(--ink);width:15px;height:15px;flex-shrink:0}.field-note{font-size:12px;color:var(--muted);line-height:1.5;margin:9px 0 24px;min-height:54px}.label-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:20px;margin-bottom:9px}.label-row label{margin:0}.range-ends{display:flex;justify-content:space-between;color:var(--muted);font-size:10px}.check{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:400;cursor:pointer;margin:10px 0}.rule-summary{border-top:1px solid var(--line);padding-top:20px;margin-top:24px}.rule-summary span{font-size:11px;color:var(--muted)}.rule-summary strong{display:block;font-size:15px;font-weight:500}.rule-summary p{font-size:12px;color:var(--muted);margin:6px 0}.presets{border:0;padding:0;margin:25px 0 0;display:flex;flex-wrap:wrap;gap:7px}.presets legend{font-size:12px;font-weight:600;margin-bottom:10px}.presets button{font-size:11px;padding:6px 9px}.presets button.active{background:var(--soft);border-color:var(--ink)}.game{padding:32px 44px 28px;min-width:0;background:var(--white)}.section-top{display:flex;justify-content:space-between;align-items:center;gap:12px}.section-top .check{margin:0 0 10px}.game h2{font-size:34px}.game-message{color:var(--muted);margin:0 0 22px;min-height:24px;max-width:780px}.game-meta{display:flex;gap:22px;flex-wrap:wrap;font-size:11px;color:var(--muted);border-top:1px solid var(--line);padding-top:13px}.doors{display:grid;grid-template-columns:repeat(3,minmax(50px,130px));justify-content:center;align-content:center;gap:24px;min-height:290px;padding:30px 0}.door{position:relative;aspect-ratio:.62;border:2px solid transparent;background:#315166;color:#fff;border-radius:3px;padding:18px 6px 12px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;isolation:isolate;transition:transform .2s,background .2s,border-color .2s;box-shadow:inset 0 0 0 6px #ffffff0b}.door:after{content:'';width:7px;height:7px;background:var(--gold);position:absolute;right:12px;top:54%;border-radius:50%}.door:hover:not(:disabled){background:#41657a;transform:translateY(-3px);border-color:var(--gold)}.door:disabled{opacity:1}.door.selected{border-color:var(--rust);outline:3px solid #a8422c30;outline-offset:4px}.door.open{background:#e7e6dd;color:var(--muted);box-shadow:none;border-color:#d7d7cc;transform:none}.door.open:after{display:none}.door.car{background:#eee3c5;color:#6c5423;border-color:var(--gold);box-shadow:none}.door.car:after{display:none}.door-number{font:normal 22px var(--serif)}.door-content{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:9px;min-height:35px;font-size:10px;font-weight:600;letter-spacing:.08em}.door-content svg{width:44px;height:35px}.door-label{font-size:10px;letter-spacing:.04em;height:16px;color:#ffffffc9}.open .door-label,.car .door-label{color:inherit}.door.final{outline:3px solid var(--rust);outline-offset:4px}.door.small{aspect-ratio:.85;padding:8px 3px 5px;box-shadow:none}.doors.compact{grid-template-columns:repeat(auto-fit,minmax(48px,1fr));gap:9px;min-height:290px;max-height:490px;overflow:auto;padding:22px 5px}.door.small .door-number{font-size:15px}.door.small .door-content{min-height:18px;font-size:7px;gap:2px}.door.small .door-content svg{width:23px;height:20px}.door.small .door-label{font-size:7px;height:10px}.door.small:after{width:4px;height:4px;right:6px}.game-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-height:45px}.record{margin-top:28px;border-top:1px solid var(--line);padding-top:15px;font-size:12px;color:var(--muted)}summary{cursor:pointer}.record summary{display:flex;justify-content:space-between}.record summary span{font-size:11px}.record ol{margin:14px 0 0;padding-left:24px;max-height:180px;overflow:auto}.record li{padding:3px 0}.simulation{padding:40px 44px 35px;border-bottom:1px solid var(--line)}.section-title{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:24px}.section-title h2{margin-bottom:9px}.section-title p:not(.eyebrow){color:var(--muted);margin:0}.section-title button{font-size:12px;white-space:nowrap}.batch-controls{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:22px}.batch-controls>div{width:160px}.batch-controls button{min-height:43px}.batch-status{color:var(--muted);font-size:12px;margin:18px 0 24px}progress{width:100%;height:6px;accent-color:var(--rust);margin-top:18px}#progress-text{font-size:12px;margin:4px 0;color:var(--muted)}.results-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(300px,1fr);gap:40px}.chart-wrap{min-width:0}.chart-title{display:flex;justify-content:space-between;gap:10px;align-items:center}.chart-title h3{margin:0}.legend{display:flex;gap:18px;font-size:11px;color:var(--muted)}.legend span:before{content:'';display:inline-block;vertical-align:middle;width:16px;height:3px;margin-right:5px;background:var(--blue)}.legend .switch-key:before{background:var(--rust)}.legend .model-key:before{background:none;border-top:2px dashed var(--muted);height:0}canvas{width:100%;height:300px;display:block;margin-top:12px}.chart-caption{font-size:11px;color:var(--muted);margin-top:10px}.rates{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}.rates caption{text-align:left;font-size:12px;color:var(--muted);padding:0 0 14px}.rates th,.rates td{padding:10px 4px;border-bottom:1px solid var(--line);text-align:right}.rates th:first-child{text-align:left;width:32%}.rates thead{font-size:10px;color:var(--muted)}.rates tbody td{font-size:19px;font-variant-numeric:tabular-nums}.rates tbody th{font-weight:400}.color-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px}.stay-dot{background:var(--blue)}.switch-dot{background:var(--rust)}.counts{font-size:12px;margin:20px 0}.counts>div{display:flex;justify-content:space-between;gap:12px;padding:5px 0}.counts dt{color:var(--muted)}.counts dd{margin:0;font-variant-numeric:tabular-nums}.uncertainty{font-size:11px;color:var(--muted);padding-top:10px;border-top:1px solid var(--line)}.uncertainty p{line-height:1.6}.comparison-table{width:100%;border-collapse:collapse;font-size:12px}.comparison-table td,.comparison-table th{text-align:right;padding:12px 10px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}.comparison-table th{font-size:11px;color:var(--muted);font-weight:500}.comparison-table td:first-child,.comparison-table th:first-child{text-align:left}.comparison-table tr.current{background:#ebe9e066}#comparison{border-top:1px solid var(--line);margin-top:30px;padding-top:24px}#comparison h3{margin-bottom:6px}#comparison p{font-size:12px;color:var(--muted);margin-top:0}.table-scroll{overflow:auto}.model-notes{padding:40px 44px 45px}.notes-columns{display:grid;grid-template-columns:1fr 1fr;gap:65px;margin-top:26px;max-width:1160px}.notes-columns p{font-size:13px;color:var(--muted);line-height:1.7}.notes-columns h3{margin-top:23px}.notes-columns h3:first-child{margin-top:0}.notes-columns .formula{font-family:var(--serif);font-size:17px;color:var(--ink);overflow-wrap:anywhere;margin:18px 0}.notes-columns .small{font-size:11px;margin-top:24px}footer{padding:20px 44px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);display:flex;gap:20px;align-items:center}footer button{margin-left:auto;font-size:11px}@media(min-width:1550px){.masthead{padding-top:50px}.doors{min-height:340px}}@media(max-width:1050px){.masthead{align-items:flex-start}.masthead nav{gap:14px;flex-wrap:wrap;justify-content:flex-end;max-width:260px}.experiment{grid-template-columns:242px minmax(0,1fr)}.controls{padding-left:28px;padding-right:22px}.game{padding-inline:28px}.doors{gap:15px}.results-layout{gap:25px;grid-template-columns:minmax(0,1.2fr) minmax(280px,1fr)}.legend{gap:10px}}@media(max-width:760px){.masthead{padding:25px 22px;display:block}.masthead nav{max-width:none;justify-content:flex-start;margin-top:22px;gap:20px;font-size:12px}.masthead nav .text-button{display:none}.experiment{display:block}.controls{padding:24px 22px;border-right:0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;column-gap:22px}.controls h2,.controls>label,.controls>select,.controls>.field-note,.controls>.presets,.controls>#error-control,.controls>.rule-summary{grid-column:1/-1}.controls .field-note{min-height:0;margin-bottom:12px}.controls>.label-row{grid-column:1/-1}.controls>#doors{grid-column:1/-1}.controls>.range-ends{grid-column:1/-1}.controls>.check{grid-column:1/-1}.controls h2{margin-bottom:18px}.rule-summary{margin-top:14px;padding-top:14px}.presets{margin-top:15px}.game{padding:25px 22px}.game h2{font-size:29px}.game-meta{gap:15px}.doors{grid-template-columns:repeat(3,minmax(50px,100px));min-height:250px;gap:14px}.doors.compact{min-height:240px;max-height:420px;grid-template-columns:repeat(auto-fit,minmax(42px,1fr));gap:8px}.simulation,.model-notes{padding:30px 22px}.results-layout,.notes-columns{grid-template-columns:1fr;gap:25px}.results-table-wrap{padding-top:15px}.batch-controls>div{flex:1;min-width:120px}.batch-controls{gap:10px}.batch-controls button{font-size:13px;padding-inline:13px}.section-title{align-items:center}.section-title h2{font-size:27px}.section-title p:not(.eyebrow){font-size:13px}.legend{font-size:10px}footer{padding-inline:22px}.notes-columns{margin-top:20px}.game-actions button{font-size:13px}.section-top .check{font-size:11px}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+
+@media(min-width:761px){.masthead{padding-top:26px;padding-bottom:24px}h1{font-size:54px}}
+</style>
+  
+</head>
+<body>
+  <header class="masthead"><div><p class="eyebrow">STATISTICAL ANALYSIS / GROUP 4</p><h1>Monty Hall</h1><p class="intro">One prize. Different rules for opening the doors.</p></div><nav aria-label="Sections"><a href="#experiment">Experiment</a><a href="#simulation">Simulation</a><a href="#model">Model notes</a><button id="fullscreen" class="text-button">Full screen</button></nav></header>
+  <main>
+    <section id="experiment" class="experiment" aria-labelledby="experiment-heading">
+      <aside class="controls">
+        <h2 id="experiment-heading">Set the rules</h2>
+        <label for="host">Host</label><select id="host"><option value="informed">Informed</option><option value="uninformed">Uninformed</option><option value="fallible">Error-prone</option></select>
+        <p id="host-description" class="field-note"></p>
+        <div class="label-row"><label for="doors">Doors</label><input id="doors-number" type="number" min="3" max="100" value="3" aria-label="Number of doors"></div>
+        <input id="doors" type="range" min="3" max="100" value="3"><div class="range-ends"><span>3</span><span>100</span></div>
+        <div class="label-row"><label for="reveals">Doors opened by host</label><input id="reveals" type="number" min="1" max="1" value="1"></div>
+        <label class="check"><input id="max-reveals" type="checkbox" checked> Leave two doors closed</label>
+        <div id="error-control" hidden><div class="label-row"><label for="error">Random action rate</label><output id="error-value">25%</output></div><input id="error" type="range" min="0" max="100" value="25"><p class="field-note">On each opening, the host may ignore the car's location and choose at random.</p></div>
+        <div class="rule-summary"><span>After safe reveals</span><strong id="remaining-count">2 doors remain</strong><p>Switching selects one of the other closed doors uniformly at random.</p></div>
+        <fieldset class="presets"><legend>Examples</legend><button type="button" data-preset="standard">Standard game</button><button type="button" data-preset="blind">Uninformed host</button><button type="button" data-preset="hundred">100 doors</button><button type="button" data-preset="error">Host errors</button></fieldset>
+      </aside>
+      <div class="game">
+        <div class="section-top"><p class="eyebrow">SINGLE GAME</p><label class="check"><input id="show-car" type="checkbox"> Show car location</label></div>
+        <h2 id="game-heading">Choose a door</h2><p id="game-message" class="game-message" aria-live="polite">The car is hidden. Click any closed door.</p>
+        <div class="game-meta"><span id="game-number">Game 1</span><span id="reveal-count">Host reveals: 0 / 1</span><span id="selected-door">Your door: —</span></div>
+        <div id="door-grid" class="doors" aria-label="Game doors"></div>
+        <div class="game-actions"><button id="next" class="primary" disabled>Open next door</button><button id="play" disabled>Play reveals</button><button id="stay" hidden>Stay</button><button id="switch" class="primary" hidden>Switch</button><button id="new-game" class="text-button">New game</button></div>
+        <details class="record"><summary>Game record <span id="record-count">0 actions</span></summary><ol id="game-record"></ol></details>
+      </div>
+    </section>
+    <section id="simulation" class="simulation" aria-labelledby="simulation-heading">
+      <div class="section-title"><div><p class="eyebrow">REPEATED TRIALS</p><h2 id="simulation-heading">Check the probabilities</h2><p>Compare staying and switching across the same games.</p></div><button id="export" disabled>Export CSV</button></div>
+      <div class="batch-controls"><div><label for="trials">Trials per host</label><select id="trials"><option value="1000">1,000</option><option value="10000" selected>10,000</option><option value="100000">100,000</option><option value="1000000">1,000,000</option></select></div><div><label for="seed">Seed</label><input id="seed" value="20261016" maxlength="64" spellcheck="false"></div><button id="run" class="primary">Run simulation</button><button id="compare">Compare hosts</button><button id="cancel" hidden>Stop</button></div>
+      <div id="progress-wrap" hidden><progress id="progress" max="1" value="0"></progress><p id="progress-text" role="status">Running…</p></div>
+      <p id="batch-status" class="batch-status" aria-live="polite">Model probabilities appear below. Run a simulation to add observed results.</p>
+      <div class="results-layout"><div class="chart-wrap"><div class="chart-title"><h3>Winning rate</h3><div class="legend"><span class="stay-key">Stay</span><span class="switch-key">Switch</span><span class="model-key">Model</span></div></div><canvas id="chart" height="300" role="img" aria-label="Winning rates by trial count. Dashed lines show the mathematical model."></canvas><p class="chart-caption">Rates use games where every host opening revealed a goat.</p></div>
+        <div class="results-table-wrap"><table class="rates"><caption id="rate-caption">Informed host · 3 doors · 1 reveal</caption><thead><tr><th scope="col">Strategy</th><th scope="col">Observed</th><th scope="col">Model</th></tr></thead><tbody><tr><th scope="row"><span class="color-dot stay-dot"></span>Stay</th><td id="stay-rate">—</td><td id="stay-theory">33.33%</td></tr><tr><th scope="row"><span class="color-dot switch-dot"></span>Switch</th><td id="switch-rate">—</td><td id="switch-theory">66.67%</td></tr></tbody></table><dl class="counts"><div><dt>Total trials</dt><dd id="total-count">—</dd></div><div><dt>All reveals were goats</dt><dd id="eligible-count">—</dd></div><div><dt>Host revealed the car</dt><dd id="car-count">—</dd></div><div><dt>Stay wins</dt><dd id="stay-count">—</dd></div><div><dt>Switch wins</dt><dd id="switch-count">—</dd></div><div><dt>Both strategies lose</dt><dd id="both-count">—</dd></div></dl><details class="uncertainty"><summary>Sampling uncertainty</summary><p id="ci-text">Run a simulation to see 95% Wilson confidence intervals.</p></details></div>
+      </div>
+      <div id="comparison" hidden><h3>Host comparison</h3><p>Each host receives the same car locations and initial choices. Rates are conditional on all reveals being goats.</p><div class="table-scroll"><table class="comparison-table"><thead><tr><th>Host</th><th>Eligible games</th><th>Car revealed</th><th>Stay</th><th>Switch</th><th>Model: switch</th></tr></thead><tbody id="comparison-body"></tbody></table></div></div>
+    </section>
+    <section id="model" class="model-notes" aria-labelledby="model-heading"><p class="eyebrow">ASSUMPTIONS & CALCULATION</p><h2 id="model-heading">What the model includes</h2><div class="notes-columns"><div><h3>The game</h3><p>One car is placed uniformly among N doors. The initial choice is independent of its location. The host opens R distinct, unchosen doors in sequence. If the car appears, the game stops.</p><p>After R goat reveals, staying keeps the initial door. Switching selects one other closed door uniformly at random. With more than two closed doors, both strategies can lose.</p><h3>The host</h3><p><strong>Informed:</strong> always chooses uniformly among available goat doors.</p><p><strong>Uninformed:</strong> chooses uniformly among all available unchosen doors.</p><p><strong>Error-prone:</strong> on each opening, uses the uninformed rule with probability e and the informed rule otherwise. This random action rate is not the same as the probability of revealing the car.</p></div><div><h3>The probabilities</h3><p>Let m = N − R − 1 be the alternatives left after the host finishes. If the initial choice is wrong, the chance that every opening is safe is:</p><p class="formula">s = ∏<sub>j = 0…R − 1</sub> (1 − e / (N − 1 − j))</p><p>Use e = 0 for an informed host and e = 1 for an uninformed host. Conditional on all R reveals being goats:</p><p class="formula">P(stay wins) = 1 / (1 + (N − 1)s)</p><p class="formula">P(switch wins) = (1 − P(stay wins)) / m</p><p>For an informed host opening N − 2 doors, switching wins with probability (N − 1) / N. For an uninformed host, both strategies win with probability 1 / (N − R), given safe reveals.</p><p class="small">Simulations use a seeded pseudorandom generator. They check this specified model; they are not observations from a television game show. For discussion of the modelling assumptions, see <a href="https://pub.math.leidenuniv.nl/~gillrd/essential_MHP.html" target="_blank" rel="noreferrer">Gill (2011)</a>.</p></div></div></section>
+  </main><footer><span>DOTE5110 Statistical Analysis</span><span>Group 4</span><button id="reset" class="text-button">Reset experiment</button></footer>
+<script>(function (root) {
+  function createEngine() {
+    function rng(seed) {
+      let h = 2166136261;
+      for (const c of String(seed)) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); }
+      return function () {
+        h += 0x6D2B79F5;
+        let t = h;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      };
+    }
+    function config(input) {
+      const n = Number(input.n), r = Number(input.r), error = Number(input.error ?? 0.25);
+      if (!Number.isInteger(n) || n < 3 || n > 100) throw new Error('Door count must be an integer from 3 to 100.');
+      if (!Number.isInteger(r) || r < 1 || r > n - 2) throw new Error('The host must open between 1 and N − 2 doors.');
+      if (!['informed', 'uninformed', 'fallible'].includes(input.mode)) throw new Error('Unknown host rule.');
+      if (!Number.isFinite(error) || error < 0 || error > 1) throw new Error('Random action rate must be between 0 and 1.');
+      return { n, r, error, mode: input.mode };
+    }
+    function epsilon(c) { return c.mode === 'informed' ? 0 : c.mode === 'uninformed' ? 1 : c.error; }
+    function theory(input) {
+      const c = config(input), e = epsilon(c), m = c.n - c.r - 1;
+      let safeIfWrong = 1;
+      for (let j = 0; j < c.r; j++) safeIfWrong *= 1 - e / (c.n - 1 - j);
+      const eligible = (1 + (c.n - 1) * safeIfWrong) / c.n;
+      const stay = 1 / (1 + (c.n - 1) * safeIfWrong);
+      const change = (1 - stay) / m;
+      return { stay, switch: change, eligible, carReveal: 1 - eligible, safeIfWrong, remainingAlternatives: m };
+    }
+    function opening(c, car, selected, opened, random) {
+      const available = [];
+      for (let d = 0; d < c.n; d++) if (d !== selected && !opened.includes(d)) available.push(d);
+      const e = epsilon(c);
+      const randomAction = e === 1 || (e > 0 && random() < e);
+      const options = randomAction ? available : available.filter(d => d !== car);
+      const door = options[Math.floor(random() * options.length)];
+      return { door, carRevealed: door === car, randomAction };
+    }
+    function trial(c, car, selected, hostRandom, switchDraw, trackOpenings = true) {
+      const opened = [], available = [];
+      for (let d = 0; d < c.n; d++) if (d !== selected) available.push(d);
+      let carIndex = car === selected ? -1 : car < selected ? car : car - 1;
+      const e = epsilon(c);
+      for (let k = 0; k < c.r; k++) {
+        const randomAction = e === 1 || (e > 0 && hostRandom() < e);
+        let index;
+        if (randomAction || carIndex < 0) index = Math.floor(hostRandom() * available.length);
+        else { index = Math.floor(hostRandom() * (available.length - 1)); if (index >= carIndex) index++; }
+        const door = available[index];
+        if (trackOpenings) opened.push(door);
+        if (door === car) return { eligible: false, stay: false, switch: false, opened };
+        const oldLast = available.length - 1, replacement = available.pop();
+        if (index < available.length) available[index] = replacement;
+        if (carIndex === oldLast) carIndex = index;
+      }
+      const target = available[Math.min(available.length - 1, Math.floor(switchDraw * available.length))];
+      return { eligible: true, stay: car === selected, switch: car === target, target, opened };
+    }
+    function wilson(wins, total) {
+      if (!total) return [0, 1];
+      const z = 1.959963984540054, p = wins / total, den = 1 + z * z / total;
+      const center = (p + z * z / (2 * total)) / den;
+      const width = z * Math.sqrt(p * (1 - p) / total + z * z / (4 * total * total)) / den;
+      return [Math.max(0, center - width), Math.min(1, center + width)];
+    }
+    function batch(input, count, seed, onProgress) {
+      const c = config(input);
+      if (!Number.isInteger(count) || count < 1 || count > 1000000) throw new Error('Trial count must be from 1 to 1,000,000.');
+      // Each host uses identical starting positions and switch draws for a given seed.
+      const positions = rng(seed + '|positions'), hostRandom = rng(seed + '|host|' + c.mode + '|' + epsilon(c));
+      const switches = rng(seed + '|switch');
+      const out = { config: c, seed: String(seed), trials: count, eligible: 0, carReveals: 0, stayWins: 0, switchWins: 0, bothLose: 0, points: [] };
+      const interval = Math.max(1, Math.ceil(count / 160));
+      for (let i = 1; i <= count; i++) {
+        const car = Math.floor(positions() * c.n), selected = Math.floor(positions() * c.n);
+        const result = trial(c, car, selected, hostRandom, switches(), false);
+        if (!result.eligible) out.carReveals++;
+        else { out.eligible++; out.stayWins += Number(result.stay); out.switchWins += Number(result.switch); out.bothLose += Number(!result.stay && !result.switch); }
+        if (i % interval === 0 || i === count) {
+          out.points.push({ trial: i, eligible: out.eligible, stay: out.eligible ? out.stayWins / out.eligible : null, switch: out.eligible ? out.switchWins / out.eligible : null });
+          if (onProgress) onProgress(i / count);
+        }
+      }
+      out.theory = theory(c);
+      out.stayCI = wilson(out.stayWins, out.eligible);
+      out.switchCI = wilson(out.switchWins, out.eligible);
+      return out;
+    }
+    return { rng, config, epsilon, theory, opening, trial, wilson, batch };
+  }
+  const engine = createEngine();
+  engine.workerSource = `const engine = (${createEngine.toString()})(); onmessage = function(event) { const {configs,count,seed}=event.data; try { const results=[]; for(let i=0;i<configs.length;i++){ results.push(engine.batch(configs[i],count,seed,p=>postMessage({type:'progress',value:(i+p)/configs.length}))); } postMessage({type:'done',results}); } catch(error){postMessage({type:'error',message:error.message});} };`;
+  if (typeof module !== 'undefined' && module.exports) module.exports = engine;
+  else root.Monty = engine;
+})(globalThis);
+
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const names = { informed: 'Informed', uninformed: 'Uninformed', fallible: 'Error-prone' };
+  const descriptions = {
+    informed: 'Knows where the car is. Always opens a goat door.',
+    uninformed: 'Does not know where the car is. Opens an unchosen door at random.',
+    fallible: 'Knows where the car is, but sometimes chooses at random.'
+  };
+  const carIcon = '<svg viewBox="0 0 48 36" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 24V17l5-3 4-8h18l5 8 4 3v7H6Z"/><path d="M12 14h24M24 6v8"/><circle cx="14" cy="26" r="4" fill="currentColor"/><circle cx="34" cy="26" r="4" fill="currentColor"/></svg>';
+  const goatIcon = '<svg viewBox="0 0 48 36" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 11 13 3M31 11l4-8M16 14l-9-3 5 8M32 14l9-3-5 8M15 13l9-3 9 3-2 14-7 6-7-6Z"/><path d="M20 21h1M27 21h1M22 27h4"/></svg>';
+  let settings, game, gameIndex = 0, animation = null, worker = null, workerURL = null, results = [], currentResult = null;
+  const percent = (value, digits = 2) => Number.isFinite(value) ? (value * 100).toFixed(digits) + '%' : '—';
+  const number = value => Number(value).toLocaleString('en-US');
+  const clamp = (v, low, high) => Math.max(low, Math.min(high, Math.round(Number(v) || low)));
+  function describe(c) { return `${names[c.mode]} host${c.mode === 'fallible' ? ` (${Math.round(c.error * 100)}% random)` : ''} · ${c.n} doors · ${c.r} ${c.r === 1 ? 'reveal' : 'reveals'}`; }
+  function readSettings() {
+    const n = clamp($('doors-number').value, 3, 100);
+    $('doors').value = $('doors-number').value = n;
+    $('reveals').max = n - 2;
+    const r = $('max-reveals').checked ? n - 2 : clamp($('reveals').value, 1, n - 2);
+    $('reveals').value = r;
+    $('reveals').disabled = $('max-reveals').checked;
+    return Monty.config({ n, r, mode: $('host').value, error: Number($('error').value) / 100 });
+  }
+  function stopAnimation() { if (animation) clearInterval(animation); animation = null; }
+  function stopWorker() {
+    if (worker) worker.terminate();
+    if (workerURL) URL.revokeObjectURL(workerURL);
+    worker = null; workerURL = null;
+    $('run').disabled = $('compare').disabled = false;
+    $('cancel').hidden = $('progress-wrap').hidden = true;
+  }
+  function changed() {
+    stopWorker(); settings = readSettings();
+    $('host-description').textContent = descriptions[settings.mode];
+    $('error-control').hidden = settings.mode !== 'fallible';
+    $('error-value').textContent = Math.round(settings.error * 100) + '%';
+    $('remaining-count').textContent = `${settings.n - settings.r} doors remain`;
+    document.querySelectorAll('[data-preset]').forEach(el => el.classList.toggle('active',
+      (el.dataset.preset === 'standard' && settings.mode === 'informed' && settings.n === 3) ||
+      (el.dataset.preset === 'blind' && settings.mode === 'uninformed' && settings.n === 3) ||
+      (el.dataset.preset === 'hundred' && settings.mode === 'informed' && settings.n === 100 && settings.r === 98) ||
+      (el.dataset.preset === 'error' && settings.mode === 'fallible' && settings.n === 3)));
+    results = []; currentResult = null; $('comparison').hidden = true; $('export').disabled = true;
+    $('batch-status').textContent = 'Model probabilities appear below. Run a simulation to add observed results.';
+    newGame(); renderStats();
+  }
+  function log(text) { game.record.push(text); }
+  function newGame() {
+    stopAnimation();
+    gameIndex++;
+    const random = Monty.rng(($('seed').value || '20261016') + '|game|' + gameIndex);
+    game = { phase: 'choose', car: Math.floor(random() * settings.n), selected: null, opened: [], random, record: [], target: null, final: null, strategy: null, last: null };
+    renderGame();
+  }
+  function choose(door) {
+    if (game.phase !== 'choose') return;
+    game.selected = door; game.phase = 'reveal';
+    log(`You chose Door ${door + 1}.`); renderGame();
+  }
+  function nextReveal() {
+    if (game.phase !== 'reveal') return;
+    const event = Monty.opening(settings, game.car, game.selected, game.opened, game.random);
+    game.opened.push(event.door); game.last = event;
+    const action = settings.mode === 'fallible' ? ` (${event.randomAction ? 'random action' : 'informed action'})` : '';
+    log(`The host opened Door ${event.door + 1}${action}: ${event.carRevealed ? 'car' : 'goat'}.`);
+    if (event.carRevealed) {
+      game.phase = 'aborted'; stopAnimation();
+      log('The game stopped. This game is counted as a car reveal, not an eligible stay/switch decision.');
+    } else if (game.opened.length === settings.r) {
+      game.phase = 'decide'; stopAnimation();
+      const alternatives = Array.from({ length: settings.n }, (_, i) => i).filter(i => i !== game.selected && !game.opened.includes(i));
+      game.target = alternatives[Math.floor(game.random() * alternatives.length)];
+      log(`${settings.n - settings.r} doors remain closed. You can stay or switch.`);
+    }
+    renderGame();
+  }
+  function finish(strategy) {
+    if (game.phase !== 'decide') return;
+    game.strategy = strategy; game.final = strategy === 'stay' ? game.selected : game.target; game.phase = 'done';
+    log(`You ${strategy === 'stay' ? 'stayed with' : 'switched to'} Door ${game.final + 1}. ${game.final === game.car ? 'You won the car.' : 'The door contains a goat.'}`);
+    log(`The car was behind Door ${game.car + 1}. For this game, staying ${game.selected === game.car ? 'wins' : 'loses'} and the sampled switch to Door ${game.target + 1} ${game.target === game.car ? 'wins' : 'loses'}.`);
+    renderGame();
+  }
+  function renderGame() {
+    const completed = ['done', 'aborted'].includes(game.phase);
+    $('game-number').textContent = `Game ${gameIndex}`;
+    $('reveal-count').textContent = `Host reveals: ${game.opened.length} / ${settings.r}`;
+    $('selected-door').textContent = `Your door: ${game.selected === null ? '—' : game.selected + 1}`;
+    const headings = { choose: 'Choose a door', reveal: 'The host opens the doors', decide: 'Stay or switch?', done: game.final === game.car ? 'You won the car' : 'You found a goat', aborted: 'The host revealed the car' };
+    $('game-heading').textContent = headings[game.phase];
+    let message;
+    if (game.phase === 'choose') message = $('show-car').checked ? 'The car location is shown for demonstration. Click any door.' : 'The car is hidden. Click any closed door.';
+    if (game.phase === 'reveal') message = game.last ? `Door ${game.last.door + 1} contains a goat. ${settings.r - game.opened.length} host ${settings.r - game.opened.length === 1 ? 'opening remains' : 'openings remain'}.` : descriptions[settings.mode];
+    if (game.phase === 'decide') message = settings.n - settings.r === 2 ? 'The other closed door is the only switch option.' : `Switching will randomly select one of the ${settings.n - settings.r - 1} other closed doors.`;
+    if (game.phase === 'done') message = `You ${game.strategy === 'stay' ? 'kept' : 'switched to'} Door ${game.final + 1}. The car was behind Door ${game.car + 1}.`;
+    if (game.phase === 'aborted') message = `Door ${game.car + 1} contains the car. This game stops before a stay/switch decision.`;
+    $('game-message').textContent = message;
+    const grid = $('door-grid'); grid.classList.toggle('compact', settings.n > 8); grid.innerHTML = '';
+    if (settings.n <= 8) grid.style.gridTemplateColumns = `repeat(${settings.n <= 4 ? settings.n : Math.ceil(settings.n / 2)}, minmax(42px, ${settings.n <= 4 ? 130 : 95}px))`;
+    else grid.style.gridTemplateColumns = '';
+    for (let i = 0; i < settings.n; i++) {
+      const opened = game.opened.includes(i), carVisible = i === game.car && (opened || completed || $('show-car').checked), visible = opened || completed || carVisible;
+      const door = document.createElement('button');
+      door.className = ['door', settings.n > 8 ? 'small' : '', opened || completed ? 'open' : '', carVisible ? 'car' : '', i === game.selected ? 'selected' : '', game.final === i ? 'final' : ''].filter(Boolean).join(' ');
+      door.disabled = game.phase !== 'choose';
+      door.setAttribute('aria-label', `Door ${i + 1}${i === game.selected ? ', your initial choice' : ''}${visible ? (i === game.car ? ', car' : ', goat') : ', closed'}${game.final === i ? ', final choice' : ''}`);
+      const label = game.final === i ? 'FINAL' : i === game.selected ? 'YOUR PICK' : opened ? 'OPENED' : '';
+      door.innerHTML = `<span class="door-number">${i + 1}</span><span class="door-content">${visible ? (i === game.car ? carIcon + '<span>CAR</span>' : goatIcon + '<span>GOAT</span>') : ''}</span><span class="door-label">${label}</span>`;
+      door.onclick = () => choose(i); grid.appendChild(door);
+    }
+    $('next').hidden = $('play').hidden = game.phase === 'decide' || completed;
+    $('next').disabled = $('play').disabled = game.phase !== 'reveal';
+    $('play').textContent = animation ? 'Pause' : 'Play reveals';
+    $('stay').hidden = $('switch').hidden = game.phase !== 'decide';
+    $('new-game').textContent = completed ? 'Next game' : 'New game';
+    $('record-count').textContent = `${game.record.length} actions`;
+    $('game-record').innerHTML = '';
+    game.record.forEach(entry => { const li = document.createElement('li'); li.textContent = entry; $('game-record').appendChild(li); });
+  }
+  function run(compare) {
+    stopWorker();
+    const count = Number($('trials').value), seed = $('seed').value || '20261016';
+    const configs = compare ? ['informed', 'uninformed', 'fallible'].map(mode => ({ ...settings, mode })) : [{ ...settings }];
+    $('run').disabled = $('compare').disabled = true; $('cancel').hidden = $('progress-wrap').hidden = false;
+    $('progress').value = 0; $('progress-text').textContent = 'Running…'; $('batch-status').textContent = 'Calculating stay and switch outcomes for each eligible game…';
+    try {
+      workerURL = URL.createObjectURL(new Blob([Monty.workerSource], { type: 'application/javascript' }));
+      worker = new Worker(workerURL);
+      worker.onmessage = event => {
+        if (event.data.type === 'progress') { $('progress').value = event.data.value; $('progress-text').textContent = `Running… ${Math.round(event.data.value * 100)}%`; }
+        if (event.data.type === 'error') { const message = event.data.message; stopWorker(); $('batch-status').textContent = message; }
+        if (event.data.type === 'done') {
+          results = event.data.results; currentResult = results.find(item => item.config.mode === settings.mode) || results[0];
+          stopWorker(); $('export').disabled = false;
+          $('batch-status').textContent = `${number(count)} trials${compare ? ' per host' : ''} completed. Seed: ${seed}. ${describe(settings)}.`;
+          renderStats(); renderComparison();
+        }
+      };
+      worker.onerror = () => { stopWorker(); $('batch-status').textContent = 'The simulation could not finish. Reload the page and try again.'; };
+      worker.postMessage({ configs, count, seed });
+    } catch (error) { stopWorker(); $('batch-status').textContent = 'This browser could not start the simulation worker. Open this page in a current version of Chrome, Safari, Edge or Firefox.'; }
+  }
+  function renderStats() {
+    const model = Monty.theory(settings), r = currentResult;
+    $('rate-caption').textContent = describe(settings);
+    $('stay-theory').textContent = percent(model.stay); $('switch-theory').textContent = percent(model.switch);
+    $('stay-rate').textContent = r?.eligible ? percent(r.stayWins / r.eligible) : '—';
+    $('switch-rate').textContent = r?.eligible ? percent(r.switchWins / r.eligible) : '—';
+    for (const [id, key] of [['total-count', 'trials'], ['eligible-count', 'eligible'], ['car-count', 'carReveals'], ['stay-count', 'stayWins'], ['switch-count', 'switchWins'], ['both-count', 'bothLose']]) $(id).textContent = r ? number(r[key]) : '—';
+    $('ci-text').textContent = r?.eligible ? `Stay: ${percent(r.stayCI[0])}–${percent(r.stayCI[1])}. Switch: ${percent(r.switchCI[0])}–${percent(r.switchCI[1])}. 95% Wilson intervals describe sampling variation among eligible games. The two strategies use the same games, so their outcomes are paired.` : 'Run a simulation with eligible games to see 95% Wilson confidence intervals.';
+    drawChart();
+  }
+  function renderComparison() {
+    $('comparison').hidden = results.length < 2;
+    $('comparison-body').innerHTML = '';
+    results.forEach(r => {
+      const tr = document.createElement('tr'); if (r.config.mode === settings.mode) tr.className = 'current';
+      const cells = [names[r.config.mode] + (r.config.mode === 'fallible' ? ` (${Math.round(r.config.error * 100)}% random)` : ''), `${number(r.eligible)} / ${number(r.trials)}`, percent(r.carReveals / r.trials), r.eligible ? percent(r.stayWins / r.eligible) : '—', r.eligible ? percent(r.switchWins / r.eligible) : '—', percent(r.theory.switch)];
+      cells.forEach((text, i) => { const td = document.createElement(i === 0 ? 'th' : 'td'); if (i === 0) td.scope = 'row'; td.textContent = text; tr.appendChild(td); });
+      $('comparison-body').appendChild(tr);
+    });
+  }
+  function drawChart() {
+    const canvas = $('chart'), width = canvas.getBoundingClientRect().width;
+    if (!width) return;
+    const dpr = window.devicePixelRatio || 1, height = 300;
+    canvas.width = Math.round(width * dpr); canvas.height = height * dpr;
+    const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
+    const pad = { left: 42, top: 18, right: 14, bottom: 35 }, w = width - pad.left - pad.right, h = height - pad.top - pad.bottom;
+    const max = currentResult?.trials || Number($('trials').value), theory = Monty.theory(settings);
+    const x = n => pad.left + n / max * w, y = p => pad.top + (1 - p) * h;
+    ctx.font = '11px Arial'; ctx.textBaseline = 'middle';
+    for (let i = 0; i <= 4; i++) {
+      const p = i / 4; ctx.strokeStyle = '#dedfd5'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad.left, y(p)); ctx.lineTo(width - pad.right, y(p)); ctx.stroke();
+      ctx.fillStyle = '#686e6d'; ctx.textAlign = 'right'; ctx.fillText(Math.round(p * 100) + '%', pad.left - 8, y(p));
+    }
+    ctx.textBaseline = 'top';
+    for (const [v, align] of [[0, 'left'], [max / 2, 'center'], [max, 'right']]) { ctx.textAlign = align; ctx.fillText(number(v), x(v), height - 24); }
+    for (const [key, color] of [['stay', '#335d79'], ['switch', '#a8422c']]) {
+      ctx.strokeStyle = color; ctx.lineWidth = 1.2; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(x(0), y(theory[key])); ctx.lineTo(x(max), y(theory[key])); ctx.stroke(); ctx.setLineDash([]);
+      if (currentResult) {
+        ctx.lineWidth = 2; ctx.beginPath(); let started = false;
+        currentResult.points.forEach(p => { if (p[key] === null) return; if (!started) { ctx.moveTo(x(p.trial), y(p[key])); started = true; } else ctx.lineTo(x(p.trial), y(p[key])); }); ctx.stroke();
+      }
+    }
+    if (!currentResult) { ctx.fillStyle = '#686e6d'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('Run a simulation to add the observed rates', pad.left + w / 2, pad.top + h * .48); }
+  }
+  function exportCSV() {
+    if (!results.length) return;
+    const rows = [['host', 'doors', 'host_reveals', 'random_action_rate', 'seed', 'total_trials', 'eligible_games', 'car_reveals', 'stay_wins', 'switch_wins', 'both_lose', 'observed_stay', 'observed_switch', 'model_stay', 'model_switch', 'model_eligible_probability', 'stay_ci95_low', 'stay_ci95_high', 'switch_ci95_low', 'switch_ci95_high']];
+    results.forEach(r => rows.push([r.config.mode, r.config.n, r.config.r, Monty.epsilon(r.config), r.seed, r.trials, r.eligible, r.carReveals, r.stayWins, r.switchWins, r.bothLose, r.eligible ? r.stayWins / r.eligible : '', r.eligible ? r.switchWins / r.eligible : '', r.theory.stay, r.theory.switch, r.theory.eligible, ...r.stayCI, ...r.switchCI]));
+    const csv = rows.map(row => row.map(v => '"' + String(v).replaceAll('"', '""') + '"').join(',')).join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    const a = document.createElement('a'); a.href = url; a.download = 'monty-hall-results.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+  $('doors').oninput = () => { $('doors-number').value = $('doors').value; changed(); };
+  for (const id of ['doors-number', 'host', 'reveals', 'max-reveals']) $(id).onchange = changed;
+  $('error').oninput = changed;
+  $('seed').onchange = () => { gameIndex = 0; changed(); };
+  $('show-car').onchange = renderGame;
+  $('next').onclick = nextReveal;
+  $('play').onclick = () => {
+    if (animation) { stopAnimation(); renderGame(); return; }
+    animation = setInterval(nextReveal, settings.n > 20 ? 90 : 550); renderGame();
+  };
+  $('stay').onclick = () => finish('stay'); $('switch').onclick = () => finish('switch'); $('new-game').onclick = newGame;
+  $('run').onclick = () => run(false); $('compare').onclick = () => run(true);
+  $('cancel').onclick = () => { stopWorker(); $('batch-status').textContent = 'Simulation stopped. No partial results were added.'; };
+  $('export').onclick = exportCSV; $('trials').onchange = drawChart;
+  document.querySelectorAll('[data-preset]').forEach(button => button.onclick = () => {
+    const preset = button.dataset.preset; $('host').value = preset === 'blind' ? 'uninformed' : preset === 'error' ? 'fallible' : 'informed';
+    $('doors-number').value = preset === 'hundred' ? 100 : 3; $('max-reveals').checked = true; $('error').value = 25; changed();
+  });
+  $('reset').onclick = () => { $('host').value = 'informed'; $('doors-number').value = 3; $('max-reveals').checked = true; $('error').value = 25; $('seed').value = '20261016'; $('trials').value = '10000'; $('show-car').checked = false; gameIndex = 0; changed(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+  $('fullscreen').hidden = !document.documentElement.requestFullscreen;
+  $('fullscreen').onclick = async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); } catch { /* Browsers can decline fullscreen in an embedded preview. */ } };
+  document.addEventListener('fullscreenchange', () => { $('fullscreen').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; });
+  window.addEventListener('resize', drawChart);
+  if (window.ResizeObserver) new ResizeObserver(drawChart).observe($('chart').parentElement);
+  window.addEventListener('pagehide', () => { stopAnimation(); stopWorker(); });
+  changed();
+})();
+</script></body></html>
