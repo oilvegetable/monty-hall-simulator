@@ -18,6 +18,10 @@ publishes the root of `main`; no build, dependencies, or external assets are nee
   counts and Wilson confidence intervals. Simulations run in a stoppable worker.
 
 The two trial inputs share the same value. Each run starts a fresh sample.
+Both charts show coordinates and observed/model winning rates on hover. You can
+also focus a chart and use Left/Right, Home/End, or Escape to inspect or dismiss
+the readout. Observed trial values snap to the recorded points on the curve;
+door-count values snap to whole doors. Trial-axis labels always use whole numbers.
 
 ## Model assumptions
 

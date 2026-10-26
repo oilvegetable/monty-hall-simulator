@@ -21,6 +21,7 @@
 @media(max-width:760px){.sweep-view{padding:24px 20px 35px}.sweep-layout{grid-template-columns:1fr;gap:14px}.sweep-readout dl{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}.sweep-readout .large{font-size:22px}.sweep-readout h3{margin-top:0}.sweep-note{font-size:12px}.app-header{gap:20px}.view-tabs{gap:16px}.header-actions .text-button{padding-inline:6px}}
 @media(max-width:480px){.app-header{height:auto;min-height:86px;flex-wrap:wrap;padding-block:10px;gap:6px 20px}.view-tabs{order:3;width:100%;height:32px;gap:25px}.header-actions{margin-left:auto}.sweep-view{padding-inline:14px}.sweep-readout dl{gap:0 14px}.sweep-controls{gap:10px}}
 @media(max-width:420px){.rulebar{flex-wrap:wrap;row-gap:5px}.play-view{min-height:calc(100svh - 160px)}}
+.chart-interactive{position:relative}.chart-interactive canvas{cursor:crosshair}.chart-tooltip{position:absolute;z-index:2;pointer-events:none;width:218px;max-width:calc(100% - 16px);padding:10px 12px;background:#fff;border:1px solid #bac4d0;border-radius:4px;box-shadow:0 3px 12px #18212b14;font-size:12px;font-variant-numeric:tabular-nums}.chart-tooltip strong{display:block;margin-bottom:6px;font-weight:600}.chart-tooltip table{width:100%;border-collapse:collapse;font-size:11px}.chart-tooltip th,.chart-tooltip td{padding:3px 0;text-align:right}.chart-tooltip th{font-weight:400;color:var(--muted)}.chart-tooltip th:first-child,.chart-tooltip td:first-child{text-align:left}.chart-tooltip .stay-value{color:var(--blue)}.chart-tooltip .switch-value{color:var(--orange)}
 </style>
   
 </head>
@@ -60,7 +61,7 @@
       <div id="progress-wrap" hidden><progress id="progress" max="1" value="0"></progress><p id="progress-text" role="status">Running…</p></div>
       <p id="batch-status" class="batch-status" aria-live="polite">Run a simulation to compare observed rates with the model.</p>
       <div class="results-layout">
-        <div class="chart-wrap"><div class="chart-title"><h3>Winning rate</h3><div class="legend"><span class="stay-key">Stay</span><span class="switch-key">Switch</span><span class="model-key">Model</span></div></div><canvas id="chart" height="300" role="img" aria-label="Winning rates by trial count. Dashed lines show the mathematical model."></canvas><p class="chart-caption">Winning rates use only games where every host opening revealed a goat.</p></div>
+        <div class="chart-wrap"><div class="chart-title"><h3>Winning rate</h3><div class="legend"><span class="stay-key">Stay</span><span class="switch-key">Switch</span><span class="model-key">Model</span></div></div><div class="chart-interactive"><canvas id="chart" height="300" role="img" tabindex="0" aria-describedby="chart-tooltip" aria-label="Winning rates by trial count. Dashed lines show the mathematical model. Use Left and Right arrow keys to inspect values."></canvas><div id="chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div></div><p class="chart-caption">Winning rates use only games where every host opening revealed a goat.</p></div>
         <div class="results-table-wrap"><table class="rates"><caption id="rate-caption">Informed host · 3 doors · 1 reveal</caption><thead><tr><th scope="col">Strategy</th><th scope="col">Observed</th><th scope="col">Model</th></tr></thead><tbody><tr><th scope="row"><span class="color-dot stay-dot"></span>Stay</th><td id="stay-rate">—</td><td id="stay-theory">33.33%</td></tr><tr><th scope="row"><span class="color-dot switch-dot"></span>Switch</th><td id="switch-rate">—</td><td id="switch-theory">66.67%</td></tr></tbody></table>
           <dl class="counts"><div><dt>Total trials</dt><dd id="total-count">—</dd></div><div><dt>All reveals were goats</dt><dd id="eligible-count">—</dd></div><div><dt>Host revealed the car</dt><dd id="car-count">—</dd></div><div><dt>Stay wins</dt><dd id="stay-count">—</dd></div><div><dt>Switch wins</dt><dd id="switch-count">—</dd></div><div><dt>Both strategies lose</dt><dd id="both-count">—</dd></div></dl>
           <details class="uncertainty"><summary>95% confidence intervals</summary><p id="ci-text">Run a simulation to see sampling uncertainty.</p></details>
@@ -73,7 +74,7 @@
       <p id="sweep-rule" class="sweep-note"></p>
       <div class="sweep-layout">
         <div class="chart-wrap">
-          <canvas id="sweep-chart" class="sweep-chart" height="340" role="img" aria-label="Model winning rates as the number of doors increases. Exact values are available in the data table below."></canvas>
+          <div class="chart-interactive"><canvas id="sweep-chart" class="sweep-chart" height="340" role="img" tabindex="0" aria-describedby="sweep-chart-tooltip" aria-label="Model winning rates as the number of doors increases. Use Left and Right arrow keys to inspect values. Exact values are available in the data table below."></canvas><div id="sweep-chart-tooltip" class="chart-tooltip" role="tooltip" hidden></div></div>
           <div class="legend sweep-legend"><span class="stay-key">Stay</span><span class="switch-key">Switch</span><span class="model-key">Lines: model</span><span class="observed-key">Circles: simulation</span></div>
           <div class="sweep-controls"><label for="sweep-door">Inspect</label><input id="sweep-door" type="range" min="3" max="100" value="3"><output id="sweep-door-value" for="sweep-door">3 doors</output><button id="sweep-play">Play 3 → 100</button></div>
           <p class="chart-caption">Winning rates are conditional on every host opening revealing a goat. The x-axis is the number of doors.</p>
@@ -228,6 +229,7 @@
   const goatIcon = '<svg viewBox="0 0 48 36" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 11 13 3M31 11l4-8M16 14l-9-3 5 8M32 14l9-3-5 8M15 13l9-3 9 3-2 14-7 6-7-6Z"/><path d="M20 21h1M27 21h1M22 27h4"/></svg>';
   let settings, game, gameIndex = 0, animation = null, worker = null, workerURL = null, results = [], currentResult = null, activeView = 'play';
   let sweepResults = [], sweepModels = [], sweepAnimation = null;
+  const chartInspections = new Map();
   const percent = (value, digits = 2) => Number.isFinite(value) ? (value * 100).toFixed(digits) + '%' : '—';
   const number = value => Number(value).toLocaleString('en-US');
   const clamp = (v, low, high) => Math.max(low, Math.min(high, Math.round(Number(v) || low)));
@@ -251,6 +253,7 @@
     $('cancel').hidden = $('progress-wrap').hidden = true;
   }
   function changed() {
+    clearChartInspections();
     stopWorker(); stopSweepAnimation(); settings = readSettings();
     $('host-description').textContent = descriptions[settings.mode];
     $('error-control').hidden = settings.mode !== 'fallible';
@@ -399,7 +402,7 @@
     canvas.width = Math.round(width * dpr); canvas.height = height * dpr;
     const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
     const pad = { left: 42, top: 18, right: 14, bottom: 35 }, w = width - pad.left - pad.right, h = height - pad.top - pad.bottom;
-    const max = currentResult?.trials || Math.max(1, Number($('trials').value) || 10000), theory = Monty.theory(settings);
+    const max = currentResult?.trials || clamp($('trials').value || 10000, 1, 1000000), theory = Monty.theory(settings);
     const x = n => pad.left + n / max * w, y = p => pad.top + (1 - p) * h;
     ctx.font = '11px Arial'; ctx.textBaseline = 'middle';
     for (let i = 0; i <= 4; i++) {
@@ -407,7 +410,8 @@
       ctx.fillStyle = '#657080'; ctx.textAlign = 'right'; ctx.fillText(Math.round(p * 100) + '%', pad.left - 8, y(p));
     }
     ctx.textBaseline = 'top';
-    for (const [v, align] of [[0, 'left'], [max / 2, 'center'], [max, 'right']]) { ctx.textAlign = align; ctx.fillText(number(v), x(v), height - 24); }
+    const ticks = [...new Set([0, Math.round(max / 2), max])];
+    for (const v of ticks) { ctx.textAlign = v === 0 ? 'left' : v === max ? 'right' : 'center'; ctx.fillText(number(v), x(v), height - 24); }
     for (const [key, color] of [['stay', '#245aa0'], ['switch', '#b85d26']]) {
       ctx.strokeStyle = color; ctx.lineWidth = 1.2; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(x(0), y(theory[key])); ctx.lineTo(x(max), y(theory[key])); ctx.stroke(); ctx.setLineDash([]);
       if (currentResult) {
@@ -416,6 +420,74 @@
       }
     }
     if (!currentResult) { ctx.fillStyle = '#657080'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('Run to add observed rates', pad.left + w / 2, pad.top + h * .48); }
+    const points = currentResult ? currentResult.points.map(p => ({value: p.trial, stay: p.stay, switch: p.switch, model: theory})) : ticks.map(value => ({value, stay: null, switch: null, model: theory}));
+    const pointAtValue = currentResult ? null : value => ({value: clamp(value, 0, max), stay: null, switch: null, model: theory});
+    paintChartInspection('chart', ctx, {width, height, pad, x, y, points, pointAtValue, axis: 'Trial'});
+  }
+  function clearChartInspections() {
+    for (const state of chartInspections.values()) { state.activeValue = null; state.tooltip.hidden = true; }
+  }
+  function setupChartInspection(id, redraw) {
+    const canvas = $(id), tooltip = $(id + '-tooltip');
+    const state = {canvas, tooltip, redraw, geometry: null, activeValue: null, pointerY: null};
+    chartInspections.set(id, state);
+    function hide() {
+      if (state.activeValue === null) return;
+      state.activeValue = null; tooltip.hidden = true; redraw();
+    }
+    canvas.addEventListener('pointermove', event => {
+      const g = state.geometry;
+      if (!g?.points.length) return;
+      const rect = canvas.getBoundingClientRect(), px = (event.clientX - rect.left) * g.width / rect.width, py = (event.clientY - rect.top) * g.height / rect.height;
+      if (px < g.pad.left || px > g.width - g.pad.right || py < g.pad.top || py > g.height - g.pad.bottom) { hide(); return; }
+      const point = g.pointAtValue ? g.pointAtValue((px - g.pad.left) / (g.width - g.pad.left - g.pad.right) * g.points.at(-1).value) : g.points.reduce((best, p) => Math.abs(g.x(p.value) - px) < Math.abs(g.x(best.value) - px) ? p : best);
+      state.activeValue = point.value; state.pointerY = py; redraw();
+    });
+    canvas.addEventListener('pointerleave', hide);
+    canvas.addEventListener('blur', hide);
+    canvas.addEventListener('focus', () => {
+      if (!state.geometry?.points.length) return;
+      state.activeValue = state.geometry.points[0].value; state.pointerY = null; redraw();
+    });
+    canvas.addEventListener('keydown', event => {
+      if (event.key === 'Escape') { hide(); return; }
+      if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key) || !state.geometry?.points.length) return;
+      event.preventDefault();
+      const points = state.geometry.points, current = Math.max(0, points.findIndex(p => p.value === state.activeValue));
+      if (state.geometry.pointAtValue) {
+        const value = event.key === 'Home' ? 0 : event.key === 'End' ? points.at(-1).value : (state.activeValue ?? 0) + (event.key === 'ArrowRight' ? 1 : -1);
+        state.activeValue = state.geometry.pointAtValue(value).value; state.pointerY = null; redraw(); return;
+      }
+      const index = event.key === 'Home' ? 0 : event.key === 'End' ? points.length - 1 : Math.max(0, Math.min(points.length - 1, current + (event.key === 'ArrowRight' ? 1 : -1)));
+      state.activeValue = points[index].value; state.pointerY = null; redraw();
+    });
+  }
+  function paintChartInspection(id, ctx, geometry) {
+    const state = chartInspections.get(id);
+    if (!state) return;
+    state.geometry = geometry;
+    if (state.activeValue === null || !geometry.points.length) { state.tooltip.hidden = true; return; }
+    const {points, x, y, width, height, pad, axis} = geometry;
+    const point = geometry.pointAtValue ? geometry.pointAtValue(state.activeValue) : points.reduce((best, p) => Math.abs(p.value - state.activeValue) < Math.abs(best.value - state.activeValue) ? p : best);
+    state.activeValue = point.value;
+    const px = x(point.value), values = [];
+    for (const [key, color] of [['stay', '#245aa0'], ['switch', '#b85d26']]) {
+      values.push({rate: point.model[key], color, model: true});
+      if (Number.isFinite(point[key])) values.push({rate: point[key], color, model: false});
+    }
+    const targetY = state.pointerY ?? y(point.model.switch);
+    const nearest = values.reduce((best, p) => Math.abs(y(p.rate) - targetY) < Math.abs(y(best.rate) - targetY) ? p : best);
+    ctx.save(); ctx.strokeStyle = '#8b98a8'; ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
+    ctx.beginPath(); ctx.moveTo(px, pad.top); ctx.lineTo(px, height - pad.bottom); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.left, y(nearest.rate)); ctx.lineTo(width - pad.right, y(nearest.rate)); ctx.stroke(); ctx.setLineDash([]);
+    for (const p of values) { ctx.strokeStyle = p.color; ctx.fillStyle = p.model ? '#fff' : p.color; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(px, y(p.rate), p.model ? 4 : 3, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }
+    ctx.restore();
+    const tooltip = state.tooltip;
+    tooltip.innerHTML = `<strong>${axis}: ${number(point.value)}</strong><table><thead><tr><th>Win rate</th><th>Observed</th><th>Model</th></tr></thead><tbody><tr><td class="stay-value">Stay</td><td>${percent(point.stay)}</td><td>${percent(point.model.stay)}</td></tr><tr><td class="switch-value">Switch</td><td>${percent(point.switch)}</td><td>${percent(point.model.switch)}</td></tr></tbody></table>`;
+    tooltip.hidden = false;
+    const left = Math.max(8, Math.min(width - tooltip.offsetWidth - 8, px + 14));
+    const top = Math.max(8, Math.min(height - tooltip.offsetHeight - 8, targetY + 14));
+    tooltip.style.left = left + 'px'; tooltip.style.top = top + 'px';
   }
   function exportCSV() {
     if (!results.length) return;
@@ -426,6 +498,7 @@
     const a = document.createElement('a'); a.href = url; a.download = 'monty-hall-classroom-results.csv'; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   function switchView(view) {
+    clearChartInspections();
     activeView = view;
     if (view !== 'play') { stopAnimation(); renderGame(); }
     if (view !== 'doors') stopSweepAnimation();
@@ -487,6 +560,11 @@
       ctx.fillStyle=color; ctx.beginPath(); ctx.arc(x(selected),y(point.theory[key]),5,0,Math.PI*2); ctx.fill();
     }
     canvas.setAttribute('aria-label', `Winning rates by door count. Selected: ${selected} doors. Model stay ${percent(point.theory.stay)}, switch ${percent(point.theory.switch)}. See the data table for all values.`);
+    const points = sweepModels.map(item => {
+      const r = sweepResults.find(r => r.config.n === item.config.n);
+      return {value: item.config.n, model: item.theory, stay: r?.eligible ? r.stayWins / r.eligible : null, switch: r?.eligible ? r.switchWins / r.eligible : null};
+    });
+    paintChartInspection('sweep-chart', ctx, {width, height, pad, x, y, points, axis: 'Doors'});
   }
   function renderSweepTable() {
     $('sweep-body').replaceChildren();
@@ -566,6 +644,8 @@
   $('fullscreen').onclick = async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); } catch { /* Browsers can decline fullscreen in an embedded preview. */ } };
   document.addEventListener('fullscreenchange', () => { $('fullscreen').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; });
   window.addEventListener('resize', () => { drawChart(); drawSweep(); });
+  setupChartInspection('chart', drawChart);
+  setupChartInspection('sweep-chart', drawSweep);
   if (window.ResizeObserver) new ResizeObserver(drawChart).observe($('chart').parentElement);
   if (window.ResizeObserver) new ResizeObserver(drawSweep).observe($('sweep-chart').parentElement);
   window.addEventListener('pagehide', () => { stopAnimation(); stopSweepAnimation(); stopWorker(); });
