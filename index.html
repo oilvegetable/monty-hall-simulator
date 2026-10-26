@@ -16,6 +16,11 @@
 
 .doors.overview{grid-template-columns:repeat(auto-fit,minmax(28px,1fr));gap:5px;padding-block:12px}.doors.overview .door{aspect-ratio:1;padding:3px 1px;justify-content:center}.doors.overview .door-number{font-size:12px;line-height:1.1}.doors.overview .door-content,.doors.overview .door-label{display:none}.doors.overview .door:after{width:3px;height:3px;right:4px;top:72%}
 @media(max-width:760px){.rulebar input[type=number]{width:64px}}
+
+.batch-controls input[type=number]{width:132px}.sweep-view{max-width:1440px;margin:auto;padding:28px 36px 42px}.sweep-note{color:var(--muted);font-size:13px;margin:12px 0 22px}.sweep-layout{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:38px}.sweep-controls{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:18px 0}.sweep-controls input[type=range]{flex:1;min-width:140px;width:auto}.sweep-controls output{min-width:73px;font-variant-numeric:tabular-nums}.sweep-controls button{font-size:13px}.sweep-readout{font-size:13px}.sweep-readout h3{font-size:19px;margin:8px 0 16px}.sweep-readout dl>div{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:12px 0}.sweep-readout dt{color:var(--muted)}.sweep-readout dd{margin:0;font-variant-numeric:tabular-nums}.sweep-readout .large{font-size:24px}.sweep-readout p{font-size:12px;color:var(--muted);margin-top:16px}.sweep-details{margin-top:24px;font-size:13px}.sweep-details .table-scroll{max-height:400px;margin-top:12px}.sweep-status{font-size:12px;color:var(--muted);margin:15px 0}.sweep-progress{margin-top:18px}.sweep-progress p{font-size:12px;color:var(--muted)}.sweep-legend{margin-top:8px;flex-wrap:wrap}.sweep-legend .observed-key:before{width:6px;height:6px;border:1px solid var(--muted);background:#fff;border-radius:50%}.sweep-legend .model-key:before{border-top-style:solid}.sweep-chart{height:340px}
+@media(max-width:760px){.sweep-view{padding:24px 20px 35px}.sweep-layout{grid-template-columns:1fr;gap:14px}.sweep-readout dl{display:grid;grid-template-columns:1fr 1fr;gap:0 22px}.sweep-readout .large{font-size:22px}.sweep-readout h3{margin-top:0}.sweep-note{font-size:12px}.app-header{gap:20px}.view-tabs{gap:16px}.header-actions .text-button{padding-inline:6px}}
+@media(max-width:480px){.app-header{height:auto;min-height:86px;flex-wrap:wrap;padding-block:10px;gap:6px 20px}.view-tabs{order:3;width:100%;height:32px;gap:25px}.header-actions{margin-left:auto}.sweep-view{padding-inline:14px}.sweep-readout dl{gap:0 14px}.sweep-controls{gap:10px}}
+@media(max-width:420px){.rulebar{flex-wrap:wrap;row-gap:5px}.play-view{min-height:calc(100svh - 160px)}}
 </style>
   
 </head>
@@ -25,6 +30,7 @@
     <div class="view-tabs" role="tablist" aria-label="View">
       <button id="play-tab" type="button" role="tab" aria-selected="true" aria-controls="experiment" tabindex="0" data-view="play">Play</button>
       <button id="simulation-tab" type="button" role="tab" aria-selected="false" aria-controls="simulation" tabindex="-1" data-view="simulation">Simulation</button>
+      <button id="doors-tab" type="button" role="tab" aria-selected="false" aria-controls="door-study" tabindex="-1" data-view="doors">Door count</button>
     </div>
     <div class="header-actions"><button id="rules-button" class="text-button" type="button">Rules</button><button id="fullscreen" class="text-button" type="button">Full screen</button></div>
   </header>
@@ -50,7 +56,7 @@
 
     <section id="simulation" class="simulation-view" role="tabpanel" aria-labelledby="simulation-tab" hidden>
       <div class="simulation-heading"><h2>Simulation</h2><button id="export" disabled>Export CSV</button></div>
-      <div class="batch-controls"><div class="inline-field"><label for="trials">Trials</label><select id="trials"><option value="1000">1,000</option><option value="10000" selected>10,000</option><option value="100000">100,000</option><option value="1000000">1,000,000</option></select></div><button id="run" class="primary">Run</button><button id="compare">Compare hosts</button><button id="cancel" hidden>Stop</button></div>
+      <div class="batch-controls"><div class="inline-field"><label for="trials">Trials</label><input id="trials" type="number" min="1" max="1000000" step="1" value="10000" required inputmode="numeric" title="Enter a whole number from 1 to 1,000,000"></div><button id="run" class="primary">Run</button><button id="compare">Compare hosts</button><button id="cancel" hidden>Stop</button></div>
       <div id="progress-wrap" hidden><progress id="progress" max="1" value="0"></progress><p id="progress-text" role="status">Running…</p></div>
       <p id="batch-status" class="batch-status" aria-live="polite">Run a simulation to compare observed rates with the model.</p>
       <div class="results-layout">
@@ -61,6 +67,23 @@
         </div>
       </div>
       <div id="comparison" hidden><h3>Host comparison</h3><p>Hosts receive the same car locations and initial choices. Winning rates use the eligible games for each host.</p><div class="table-scroll"><table class="comparison-table"><thead><tr><th scope="col">Host</th><th scope="col">Eligible games</th><th scope="col">Car revealed</th><th scope="col">Stay</th><th scope="col">Switch</th><th scope="col">Model: switch</th></tr></thead><tbody id="comparison-body"></tbody></table></div></div>
+    </section>
+    <section id="door-study" class="sweep-view" role="tabpanel" aria-labelledby="doors-tab" hidden>
+      <div class="simulation-heading"><h2>Winning rate by door count</h2><button id="sweep-export" disabled>Export CSV</button></div>
+      <p id="sweep-rule" class="sweep-note"></p>
+      <div class="sweep-layout">
+        <div class="chart-wrap">
+          <canvas id="sweep-chart" class="sweep-chart" height="340" role="img" aria-label="Model winning rates as the number of doors increases. Exact values are available in the data table below."></canvas>
+          <div class="legend sweep-legend"><span class="stay-key">Stay</span><span class="switch-key">Switch</span><span class="model-key">Lines: model</span><span class="observed-key">Circles: simulation</span></div>
+          <div class="sweep-controls"><label for="sweep-door">Inspect</label><input id="sweep-door" type="range" min="3" max="100" value="3"><output id="sweep-door-value" for="sweep-door">3 doors</output><button id="sweep-play">Play 3 → 100</button></div>
+          <p class="chart-caption">Winning rates are conditional on every host opening revealing a goat. The x-axis is the number of doors.</p>
+        </div>
+        <aside class="sweep-readout" aria-label="Selected door count"><h3 id="sweep-heading">3 doors</h3><dl><div><dt>Stay · model</dt><dd id="sweep-stay" class="large"></dd></div><div><dt>Switch · model</dt><dd id="sweep-switch" class="large"></dd></div><div><dt>Host opens</dt><dd id="sweep-openings"></dd></div><div><dt>Eligible · model</dt><dd id="sweep-eligible"></dd></div><div><dt>Stay · observed</dt><dd id="sweep-observed-stay">—</dd></div><div><dt>Switch · observed</dt><dd id="sweep-observed-switch">—</dd></div><div><dt>Eligible / trials</dt><dd id="sweep-count">—</dd></div></dl><p id="sweep-insight"></p></aside>
+      </div>
+      <div class="batch-controls"><div class="inline-field"><label for="sweep-trials">Trials per door count</label><input id="sweep-trials" type="number" min="1" max="1000000" step="1" value="10000" required inputmode="numeric" title="Enter a whole number from 1 to 1,000,000"></div><button id="sweep-run" class="primary">Simulate curve</button><button id="sweep-cancel" hidden>Stop</button></div>
+      <div id="sweep-progress-wrap" class="sweep-progress" hidden><progress id="sweep-progress" max="1" value="0"></progress><p id="sweep-progress-text" role="status">Running…</p></div>
+      <p id="sweep-status" class="sweep-status" aria-live="polite"></p>
+      <details class="sweep-details"><summary>Data table</summary><div class="table-scroll"><table class="comparison-table"><thead><tr><th scope="col">Doors</th><th scope="col">Host opens</th><th scope="col">Stay · model</th><th scope="col">Switch · model</th><th scope="col">Stay · observed</th><th scope="col">Switch · observed</th><th scope="col">Eligible / trials</th></tr></thead><tbody id="sweep-body"></tbody></table></div></details>
     </section>
   </main>
 
@@ -180,10 +203,14 @@
       out.switchCI = wilson(out.switchWins, out.eligible);
       return out;
     }
-    return { rng, config, epsilon, theory, opening, trial, wilson, batch };
+    function doorConfigs(input, leaveTwo) {
+      const c = config(input), first = leaveTwo ? 3 : c.r + 2;
+      return Array.from({length: 101 - first}, (_, i) => ({...c, n: first + i, r: leaveTwo ? first + i - 2 : c.r}));
+    }
+    return { rng, config, epsilon, theory, opening, trial, wilson, batch, doorConfigs };
   }
   const engine = createEngine();
-  engine.workerSource = `const engine = (${createEngine.toString()})(); onmessage = function(event) { const {configs,count,seed}=event.data; try { const results=[]; for(let i=0;i<configs.length;i++){ results.push(engine.batch(configs[i],count,seed,p=>postMessage({type:'progress',value:(i+p)/configs.length}))); } postMessage({type:'done',results}); } catch(error){postMessage({type:'error',message:error.message});} };`;
+  engine.workerSource = `const engine = (${createEngine.toString()})(); onmessage = function(event) { const {configs,count,seed,sweep}=event.data; try { const results=[]; for(let i=0;i<configs.length;i++){ const result=engine.batch(configs[i],count,sweep ? seed+'|doors|'+configs[i].n : seed,p=>postMessage({type:'progress',value:(i+p)/configs.length})); if(sweep) result.points=[]; results.push(result); } postMessage({type:'done',results}); } catch(error){postMessage({type:'error',message:error.message});} };`;
   if (typeof module !== 'undefined' && module.exports) module.exports = engine;
   else root.Monty = engine;
 })(globalThis);
@@ -200,6 +227,7 @@
   const carIcon = '<svg viewBox="0 0 48 36" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 24V17l5-3 4-8h18l5 8 4 3v7H6Z"/><path d="M12 14h24M24 6v8"/><circle cx="14" cy="26" r="4" fill="currentColor"/><circle cx="34" cy="26" r="4" fill="currentColor"/></svg>';
   const goatIcon = '<svg viewBox="0 0 48 36" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M17 11 13 3M31 11l4-8M16 14l-9-3 5 8M32 14l9-3-5 8M15 13l9-3 9 3-2 14-7 6-7-6Z"/><path d="M20 21h1M27 21h1M22 27h4"/></svg>';
   let settings, game, gameIndex = 0, animation = null, worker = null, workerURL = null, results = [], currentResult = null, activeView = 'play';
+  let sweepResults = [], sweepModels = [], sweepAnimation = null;
   const percent = (value, digits = 2) => Number.isFinite(value) ? (value * 100).toFixed(digits) + '%' : '—';
   const number = value => Number(value).toLocaleString('en-US');
   const clamp = (v, low, high) => Math.max(low, Math.min(high, Math.round(Number(v) || low)));
@@ -218,11 +246,12 @@
     if (worker) worker.terminate();
     if (workerURL) URL.revokeObjectURL(workerURL);
     worker = null; workerURL = null;
-    $('run').disabled = $('compare').disabled = false;
+    $('run').disabled = $('compare').disabled = $('sweep-run').disabled = $('trials').disabled = $('sweep-trials').disabled = false;
+    $('sweep-cancel').hidden = $('sweep-progress-wrap').hidden = true;
     $('cancel').hidden = $('progress-wrap').hidden = true;
   }
   function changed() {
-    stopWorker(); settings = readSettings();
+    stopWorker(); stopSweepAnimation(); settings = readSettings();
     $('host-description').textContent = descriptions[settings.mode];
     $('error-control').hidden = settings.mode !== 'fallible';
     $('error-value').textContent = Math.round(settings.error * 100) + '%';
@@ -238,7 +267,7 @@
       (el.dataset.preset === 'error' && settings.mode === 'fallible' && settings.n === 3)));
     results = []; currentResult = null; $('comparison').hidden = true; $('export').disabled = true;
     $('batch-status').textContent = 'Run a simulation to compare observed rates with the model.';
-    newGame(); renderStats();
+    newGame(); renderStats(); resetSweep();
   }
   function log(text) { game.record.push(text); }
   function newGame() {
@@ -321,9 +350,10 @@
   }
   function run(compare) {
     stopWorker();
+    if (!$('trials').reportValidity()) return;
     const count = Number($('trials').value), seed = $('seed').value || '20261016';
     const configs = compare ? ['informed', 'uninformed', 'fallible'].map(mode => ({ ...settings, mode })) : [{ ...settings }];
-    $('run').disabled = $('compare').disabled = true; $('cancel').hidden = $('progress-wrap').hidden = false;
+    $('run').disabled = $('compare').disabled = $('sweep-run').disabled = $('trials').disabled = $('sweep-trials').disabled = true; $('cancel').hidden = $('progress-wrap').hidden = false;
     $('progress').value = 0; $('progress-text').textContent = 'Running…'; $('batch-status').textContent = 'Calculating stay and switch outcomes for each eligible game…';
     try {
       workerURL = URL.createObjectURL(new Blob([Monty.workerSource], { type: 'application/javascript' }));
@@ -369,7 +399,7 @@
     canvas.width = Math.round(width * dpr); canvas.height = height * dpr;
     const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
     const pad = { left: 42, top: 18, right: 14, bottom: 35 }, w = width - pad.left - pad.right, h = height - pad.top - pad.bottom;
-    const max = currentResult?.trials || Number($('trials').value), theory = Monty.theory(settings);
+    const max = currentResult?.trials || Math.max(1, Number($('trials').value) || 10000), theory = Monty.theory(settings);
     const x = n => pad.left + n / max * w, y = p => pad.top + (1 - p) * h;
     ctx.font = '11px Arial'; ctx.textBaseline = 'middle';
     for (let i = 0; i <= 4; i++) {
@@ -398,15 +428,113 @@
   function switchView(view) {
     activeView = view;
     if (view !== 'play') { stopAnimation(); renderGame(); }
-    $('experiment').hidden = view !== 'play'; $('simulation').hidden = view !== 'simulation';
+    if (view !== 'doors') stopSweepAnimation();
+    $('experiment').hidden = view !== 'play'; $('simulation').hidden = view !== 'simulation'; $('door-study').hidden = view !== 'doors';
     document.querySelectorAll('[data-view]').forEach(button => { const active = button.dataset.view === view; button.setAttribute('aria-selected', String(active)); button.tabIndex = active ? 0 : -1; });
     if (view === 'simulation') requestAnimationFrame(drawChart);
+    if (view === 'doors') requestAnimationFrame(drawSweep);
     window.scrollTo({ top: 0 });
   }
+  function stopSweepAnimation() {
+    if (sweepAnimation) clearInterval(sweepAnimation);
+    sweepAnimation = null;
+    if (sweepModels.length) $('sweep-play').textContent = `Play ${sweepModels[0].config.n} → 100`;
+  }
+  function resetSweep() {
+    sweepResults = [];
+    sweepModels = Monty.doorConfigs(settings, $('max-reveals').checked).map(config => ({config, theory: Monty.theory(config)}));
+    const first = sweepModels[0].config.n;
+    $('sweep-door').min = first; $('sweep-door').value = settings.n;
+    $('sweep-rule').textContent = `${names[settings.mode]} host${settings.mode === 'fallible' ? ` · ${Math.round(settings.error * 100)}% random action rate` : ''}. ${$('max-reveals').checked ? 'At each door count N, the host opens N − 2 doors, leaving two closed.' : `At every door count, the host opens exactly ${settings.r} ${settings.r === 1 ? 'door' : 'doors'}. The curve starts at N = ${first}.`} Change the host above or the opening rule in Advanced.`;
+    $('sweep-status').textContent = `The model is shown immediately. Simulate to add observed rates for all ${sweepModels.length} door counts. Trials apply to each door count separately.`;
+    $('sweep-export').disabled = true;
+    stopSweepAnimation(); renderSweepTable(); renderSweep();
+  }
+  function renderSweep() {
+    if (!sweepModels.length) return;
+    const n = Number($('sweep-door').value), item = sweepModels.find(item => item.config.n === n), r = sweepResults.find(item => item.config.n === n);
+    $('sweep-door-value').textContent = $('sweep-heading').textContent = `${n} doors`;
+    $('sweep-stay').textContent = percent(item.theory.stay); $('sweep-switch').textContent = percent(item.theory.switch);
+    $('sweep-openings').textContent = item.config.r; $('sweep-eligible').textContent = percent(item.theory.eligible);
+    $('sweep-observed-stay').textContent = r?.eligible ? percent(r.stayWins / r.eligible) : '—';
+    $('sweep-observed-switch').textContent = r?.eligible ? percent(r.switchWins / r.eligible) : '—';
+    $('sweep-count').textContent = r ? `${number(r.eligible)} / ${number(r.trials)}` : '—';
+    $('sweep-insight').textContent = settings.mode === 'informed' && $('max-reveals').checked ? 'Stay = 1/N. Switch = (N − 1)/N. More doors give switching a larger advantage.' : settings.mode === 'uninformed' ? 'After safe reveals, both strategies win with probability 1/(N − R). Eligible games become rarer as more doors are opened.' : 'The number of doors and the host’s opening rule jointly determine the advantage of switching.';
+    drawSweep();
+  }
+  function drawSweep() {
+    const canvas = $('sweep-chart'), width = canvas.getBoundingClientRect().width;
+    if (!width || !sweepModels.length) return;
+    const dpr = window.devicePixelRatio || 1, height = 340;
+    canvas.width = Math.round(width * dpr); canvas.height = height * dpr;
+    const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr);
+    const pad = {left: 43, right: 18, top: 18, bottom: 46}, first = sweepModels[0].config.n;
+    const x = n => pad.left + (n - first) / Math.max(1, 100 - first) * (width - pad.left - pad.right), y = p => pad.top + (1 - p) * (height - pad.top - pad.bottom);
+    ctx.font = '11px Arial'; ctx.textBaseline = 'middle';
+    for (let i = 0; i <= 4; i++) { const p = i / 4; ctx.strokeStyle = '#e1e5eb'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(pad.left, y(p)); ctx.lineTo(width-pad.right,y(p)); ctx.stroke(); ctx.fillStyle='#657080'; ctx.textAlign='right'; ctx.fillText(`${p*100}%`,pad.left-8,y(p)); }
+    const ticks = [...new Set([first, ...[10,25,50,75].filter(n => n > first + 5 && n < 95), ...(first < 95 ? [100] : [])])];
+    ctx.fillStyle='#657080'; ctx.textBaseline='top';
+    ticks.forEach(n => { ctx.textAlign=n === first ? 'left' : n === 100 ? 'right' : 'center'; ctx.fillText(String(n),x(n),height-35); });
+    ctx.textAlign='center'; ctx.fillText('Number of doors',width/2,height-16);
+    const selected = Number($('sweep-door').value), point = sweepModels.find(item=>item.config.n===selected);
+    ctx.strokeStyle='#b8c1cd'; ctx.setLineDash([3,4]); ctx.beginPath(); ctx.moveTo(x(selected),pad.top); ctx.lineTo(x(selected),y(0)); ctx.stroke(); ctx.setLineDash([]);
+    for (const [key,color] of [['stay','#245aa0'],['switch','#b85d26']]) {
+      // A dashed second curve keeps equal stay/switch probabilities visible.
+      ctx.strokeStyle=color; ctx.lineWidth=2; ctx.setLineDash(key === 'switch' ? [7,3] : []); ctx.beginPath();
+      sweepModels.forEach((p,i)=>ctx[i?'lineTo':'moveTo'](x(p.config.n),y(p.theory[key]))); ctx.stroke(); ctx.setLineDash([]);
+      if (sweepModels.length === 1) { ctx.beginPath(); ctx.arc(x(first),y(point.theory[key]),4,0,Math.PI*2); ctx.stroke(); }
+      sweepResults.forEach(r=>{ if (!r.eligible) return; const rate=(key==='stay'?r.stayWins:r.switchWins)/r.eligible; ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x(r.config.n),y(rate),2.5,0,Math.PI*2); ctx.fill();ctx.stroke(); });
+      ctx.fillStyle=color; ctx.beginPath(); ctx.arc(x(selected),y(point.theory[key]),5,0,Math.PI*2); ctx.fill();
+    }
+    canvas.setAttribute('aria-label', `Winning rates by door count. Selected: ${selected} doors. Model stay ${percent(point.theory.stay)}, switch ${percent(point.theory.switch)}. See the data table for all values.`);
+  }
+  function renderSweepTable() {
+    $('sweep-body').replaceChildren();
+    sweepModels.forEach(item => {
+      const r = sweepResults.find(r=>r.config.n===item.config.n), tr=document.createElement('tr');
+      [item.config.n,item.config.r,percent(item.theory.stay),percent(item.theory.switch),r?.eligible?percent(r.stayWins/r.eligible):'—',r?.eligible?percent(r.switchWins/r.eligible):'—',r?`${number(r.eligible)} / ${number(r.trials)}`:'—'].forEach((value,i)=>{const cell=document.createElement(i?'td':'th'); if(!i)cell.scope='row';cell.textContent=value;tr.appendChild(cell);});
+      $('sweep-body').appendChild(tr);
+    });
+  }
+  function runSweep() {
+    if (!$('sweep-trials').reportValidity()) return;
+    stopWorker(); stopSweepAnimation();
+    const count=Number($('sweep-trials').value), seed=$('seed').value || '20261016', configs=sweepModels.map(item=>item.config);
+    $('run').disabled=$('compare').disabled=$('sweep-run').disabled=$('trials').disabled=$('sweep-trials').disabled=true;
+    $('sweep-cancel').hidden=$('sweep-progress-wrap').hidden=false; $('sweep-progress').value=0; $('sweep-progress-text').textContent='Running…';
+    $('sweep-status').textContent=`Running ${number(count)} trials at each of ${configs.length} door counts (${number(count*configs.length)} total). Previous completed results remain until this run finishes.`;
+    try {
+      workerURL=URL.createObjectURL(new Blob([Monty.workerSource],{type:'application/javascript'})); worker=new Worker(workerURL);
+      worker.onmessage=event=>{
+        const data=event.data;
+        if(data.type==='progress'){$('sweep-progress').value=data.value;$('sweep-progress-text').textContent=`Running… ${Math.round(data.value*100)}%`;}
+        if(data.type==='error'){stopWorker();$('sweep-status').textContent=data.message;}
+        if(data.type==='done'){sweepResults=data.results;stopWorker();$('sweep-export').disabled=false;$('sweep-status').textContent=`${number(count)} trials per door count · ${configs.length} door counts · ${number(count*configs.length)} total trials. Seed: ${seed}. Low eligible counts can produce noisy estimates; see the data table.`;renderSweepTable();renderSweep();}
+      };
+      worker.onerror=()=>{stopWorker();$('sweep-status').textContent='The simulation could not finish. Try fewer trials or reload the page.';};
+      worker.postMessage({configs,count,seed,sweep:true});
+    } catch(error){stopWorker();$('sweep-status').textContent='This browser could not start the simulation worker. Try a current browser.';}
+  }
+  $('sweep-door').oninput=()=>{stopSweepAnimation();renderSweep();};
+  $('sweep-play').onclick=()=>{
+    if(sweepAnimation){stopSweepAnimation();return;}
+    $('sweep-door').value=sweepModels[0].config.n;renderSweep();$('sweep-play').textContent='Pause';
+    sweepAnimation=setInterval(()=>{const n=Number($('sweep-door').value);if(n>=100){stopSweepAnimation();return;}$('sweep-door').value=n+1;renderSweep();if(n+1===100)stopSweepAnimation();},120);
+  };
+  $('sweep-run').onclick=runSweep;
+  $('sweep-trials').onkeydown=event=>{if(event.key==='Enter'&&!worker)runSweep();};
+  $('sweep-cancel').onclick=()=>{stopWorker();$('sweep-status').textContent='Simulation stopped. No partial results were added.';};
+  $('sweep-export').onclick=()=>{
+    if(!sweepResults.length)return;
+    const rows=[['host','doors','host_reveals','random_action_rate','seed','total_trials','eligible_games','car_reveals','stay_wins','switch_wins','both_lose','observed_stay','observed_switch','model_stay','model_switch','model_eligible_probability','stay_ci95_low','stay_ci95_high','switch_ci95_low','switch_ci95_high']];
+    sweepResults.forEach(r=>rows.push([r.config.mode,r.config.n,r.config.r,Monty.epsilon(r.config),r.seed,r.trials,r.eligible,r.carReveals,r.stayWins,r.switchWins,r.bothLose,r.eligible?r.stayWins/r.eligible:'',r.eligible?r.switchWins/r.eligible:'',r.theory.stay,r.theory.switch,r.theory.eligible,...r.stayCI,...r.switchCI]));
+    const csv=rows.map(row=>row.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\r\n'),url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'})),a=document.createElement('a');
+    a.href=url;a.download='monty-hall-door-count.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  };
   function openDialog(id) { $(id).showModal(); }
   document.querySelectorAll('[data-view]').forEach(button => {
     button.onclick = () => switchView(button.dataset.view);
-    button.onkeydown = event => { if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) { event.preventDefault(); const view = event.key === 'Home' ? 'play' : event.key === 'End' ? 'simulation' : activeView === 'play' ? 'simulation' : 'play'; switchView(view); $(view === 'play' ? 'play-tab' : 'simulation-tab').focus(); } };
+    button.onkeydown = event => { if (['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) { event.preventDefault(); const views = ['play', 'simulation', 'doors'], index = views.indexOf(activeView), view = event.key === 'Home' ? views[0] : event.key === 'End' ? views[2] : views[(index + (event.key === 'ArrowRight' ? 1 : 2)) % 3]; switchView(view); document.querySelector(`[data-view="${view}"]`).focus(); } };
   });
   $('settings-button').onclick = () => openDialog('settings-dialog');
   $('rules-button').onclick = () => openDialog('rules-dialog');
@@ -426,18 +554,21 @@
   $('stay').onclick = () => finish('stay'); $('switch').onclick = () => finish('switch'); $('new-game').onclick = newGame;
   $('run').onclick = () => run(false); $('compare').onclick = () => run(true);
   $('cancel').onclick = () => { stopWorker(); $('batch-status').textContent = 'Simulation stopped. No partial results were added.'; };
-  $('export').onclick = exportCSV; $('trials').onchange = drawChart;
+  $('export').onclick = exportCSV;
+  for (const [id, other] of [['trials', 'sweep-trials'], ['sweep-trials', 'trials']]) $(id).oninput = () => { $(other).value = $(id).value; drawChart(); };
+  $('trials').onkeydown = event => { if (event.key === 'Enter' && !worker) run(false); };
   document.querySelectorAll('[data-preset]').forEach(button => button.onclick = () => {
     const preset = button.dataset.preset; $('host').value = preset === 'blind' ? 'uninformed' : preset === 'error' ? 'fallible' : 'informed';
     $('doors-number').value = preset === 'hundred' ? 100 : 3; $('max-reveals').checked = true; $('error').value = 25; changed();
   });
-  $('reset').onclick = () => { $('host').value = 'informed'; $('doors-number').value = 3; $('max-reveals').checked = true; $('error').value = 25; $('seed').value = '20261016'; $('trials').value = '10000'; $('show-car').checked = false; gameIndex = 0; changed(); switchView('play'); $('settings-dialog').close(); };
+  $('reset').onclick = () => { $('host').value = 'informed'; $('doors-number').value = 3; $('max-reveals').checked = true; $('error').value = 25; $('seed').value = '20261016'; $('trials').value = $('sweep-trials').value = '10000'; $('show-car').checked = false; gameIndex = 0; changed(); switchView('play'); $('settings-dialog').close(); };
   $('fullscreen').hidden = !document.documentElement.requestFullscreen;
   $('fullscreen').onclick = async () => { try { if (document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); } catch { /* Browsers can decline fullscreen in an embedded preview. */ } };
   document.addEventListener('fullscreenchange', () => { $('fullscreen').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; });
-  window.addEventListener('resize', drawChart);
+  window.addEventListener('resize', () => { drawChart(); drawSweep(); });
   if (window.ResizeObserver) new ResizeObserver(drawChart).observe($('chart').parentElement);
-  window.addEventListener('pagehide', () => { stopAnimation(); stopWorker(); });
+  if (window.ResizeObserver) new ResizeObserver(drawSweep).observe($('sweep-chart').parentElement);
+  window.addEventListener('pagehide', () => { stopAnimation(); stopSweepAnimation(); stopWorker(); });
   changed();
 })();
 </script></body></html>
